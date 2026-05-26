@@ -12,3 +12,4 @@ RUN apk add --no-cache postgresql-dev \
 
 RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 
+CMD php artisan config:clear && php artisan route:clear && php artisan cache:clear && /start.sh

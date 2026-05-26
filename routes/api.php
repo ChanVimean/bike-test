@@ -9,3 +9,10 @@ use Illuminate\Support\Facades\Route;
 // })->middleware('auth:sanctum');
 
 Route::get('/movie', [MovieController::class, 'index']);
+
+Route::get('/version', function () {
+    return response()->json([
+        'version' => 'v1-render-test',
+        'time' => now(),
+    ]);
+});

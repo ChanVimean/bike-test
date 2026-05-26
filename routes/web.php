@@ -19,3 +19,6 @@ Route::get('/version', function () {
         'time' => now(),
     ]);
 });
+
+// require __DIR__.'/api.php';
+Route::prefix('api')->group(base_path('routes/api.php'));

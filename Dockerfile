@@ -1,15 +1,26 @@
-FROM richarvey/nginx-php-fpm:latest
+FROM php:8.2-fpm
 
-WORKDIR /var/www/html
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    libpq-dev \
+    zip \
+    unzip \
+    git \
+    curl \
+    && docker-php-ext-install pdo_pgsql pgsql mbstring exif pcntl bcmath gd
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www
+
 COPY . .
-
-ENV WEBROOT=/var/www/html/public
-ENV LOG_CHANNEL=stderr
-ENV COMPOSER_ALLOW_SUPERUSER=1
-
-RUN apk add --no-cache postgresql-dev \
-    && docker-php-ext-install pdo_pgsql pgsql
 
 RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 
-CMD php artisan optimize:clear && /start.sh
+RUN chown -R www-data:www-data storage bootstrap/cache
+
+EXPOSE 8000
+
+CMD php artisan optimize:clear && php artisan serve --host=0.0.0.0 --port=8000
